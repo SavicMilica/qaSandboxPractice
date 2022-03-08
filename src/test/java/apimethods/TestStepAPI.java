@@ -13,7 +13,7 @@ import java.util.List;
 import static common.TestBase.token;
 
 public class TestStepAPI {
-    public static TestStepResponse createTestStep(TestCaseRequest testStepRequest) {
+    public static TestStepResponse createTestStep(TestStepRequest testStepRequest) {
         return GsonSetup.convertJsonToClass
                 (RestAssuredMethods.post(token, testStepRequest, ApiEndpoints.TEST_CASE), TestStepResponse.class);
     }

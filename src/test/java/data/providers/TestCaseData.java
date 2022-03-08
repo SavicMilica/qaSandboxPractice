@@ -1,15 +1,12 @@
 package data.providers;
 
-import apimethods.TestCaseAPI;
 import data.models.testcase.TestCaseRequest;
 import data.models.testcase.TestCaseRequestEdit;
-import data.models.testcase.TestCaseResponse;
 import data.models.testcase.TestStepRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static common.TestBase.token;
 
 public class TestCaseData {
 

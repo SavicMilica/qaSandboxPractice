@@ -1,6 +1,5 @@
 package tests;
 
-import apimethods.EmptyClass;
 import apimethods.TestCaseAPI;
 import asserts.TestCaseAssert;
 import common.TestBase;
@@ -8,7 +7,6 @@ import data.models.testcase.TestCaseRequest;
 import data.models.testcase.TestCaseRequestEdit;
 import data.models.testcase.TestCaseResponse;
 import data.providers.TestCaseData;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.List;
@@ -27,11 +25,23 @@ public class TestCaseTest extends TestBase {
     }
 
     @Test
-    public void getTestCase() {
+    public void getCreatedTestCase() {
         createdCase = TestCaseAPI.createTestCase(token, TestCaseData.prepareTestCaseData());
-        TestCaseResponse actualResponse = TestCaseAPI.getTestCase(token, createdCase.get(0).getId());
+        TestCaseResponse actualResponse = TestCaseAPI.getCreatedTestCase(createdCase.get(0).getId());
         TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCaseResponse(createdCase, createdCase.get(0).getId());
         TestCaseAssert.getTestCaseAssert(actualResponse, expectedResponse);
+    }
+
+    @Test
+    public void getTestCaseFromTheList() {
+        TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        TestCaseResponse actualResponse = TestCaseAPI.getTestCaseFromTheList(testCaseRequest);
+    }
+
+    @Test
+    public void getAllTestCases() {
+        List<TestCaseResponse> testCaseResponseList = TestCaseAPI.getAllTestCases(token);
+        System.out.println(testCaseResponseList);
     }
 
     @Test
@@ -45,16 +55,9 @@ public class TestCaseTest extends TestBase {
 
     @Test
     public void deleteTestCase() {
-        createdCase = TestCaseAPI.createTestCase(token, TestCaseData.prepareTestCaseData());
-        TestCaseAPI.deleteTestCase(token, createdCase.get(0).getId());
-        EmptyClass emptyClass = TestCaseAPI.getTestCaseWithError(token, createdCase.get(0).getId());
-        Assert.assertNotNull(emptyClass);
-    }
-
-    @Test
-    public void getAllTestCases() {
+        TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        TestCaseAPI.deleteTestCaseInTheList(testCaseRequest);
         List<TestCaseResponse> testCaseResponseList = TestCaseAPI.getAllTestCases(token);
-        System.out.println(testCaseResponseList);
     }
 
     @Test
@@ -62,9 +65,4 @@ public class TestCaseTest extends TestBase {
         TestCaseAPI.deleteAllTestCases();
     }
 
-    @Test
-    public void createTestCaseIfTheListIsEmpty() {
-        TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
-        TestCaseAPI.createTestCaseIfTheListIsEmpty(testCaseRequest);
-    }
 }

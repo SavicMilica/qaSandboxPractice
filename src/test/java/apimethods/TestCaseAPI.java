@@ -50,10 +50,23 @@ public class TestCaseAPI {
         }
     }
 
-    public static List<TestCaseResponse> createTestCaseIfTheListIsEmpty(TestCaseRequest testCaseRequest) {
+    public static TestCaseResponse getTestCaseFromTheList(TestCaseRequest testCaseRequest) {
         List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
         if(testCaseResponseList.isEmpty()) {
-            createTestCase(token, testCaseRequest);
+            Integer testCaseId = createTestCase(token, testCaseRequest).get(0).getId();
+            return getTestCase(token, testCaseId);
+        } else {
+            Integer testCaseId = testCaseResponseList.get(0).getId();
+            return getTestCase(token, testCaseId);
+        }
+    }
+
+    public static TestCaseResponse getCreatedTestCase(Integer testCaseId) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+        for(int i = 0; i <testCaseResponseList.size(); i++) {
+            if(testCaseResponseList.get(i).getId().equals(testCaseId)) {
+                return testCaseResponseList.get(i);
+            }
         }
         return null;
     }
@@ -68,6 +81,17 @@ public class TestCaseAPI {
             Integer testCaseId = testCaseResponseList.get(0).getId();
             testCaseRequestUpdate.setTestcaseId(testCaseId);
             return updateTestCase(token, testCaseRequestUpdate, testCaseId);
+        }
+    }
+
+    public static void deleteTestCaseInTheList(TestCaseRequest testCaseRequest) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+        if(testCaseResponseList.isEmpty()) {
+            Integer testCaseId = createTestCase(token, testCaseRequest).get(0).getId();
+            deleteTestCase(token, testCaseId);
+        } else {
+            Integer testCaseId = testCaseResponseList.get(0).getId();
+            deleteTestCase(token, testCaseId);
         }
     }
 }
