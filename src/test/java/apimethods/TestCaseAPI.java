@@ -50,6 +50,16 @@ public class TestCaseAPI {
         }
     }
 
+    public static List<TestCaseResponse> createNewTestCaseInEmptyList(TestCaseRequest testCaseRequest) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+        if(testCaseResponseList.isEmpty()) {
+            return createTestCase(token, testCaseRequest);
+        } else {
+            deleteAllTestCases();
+            return createTestCase(token, testCaseRequest);
+        }
+    }
+
     public static TestCaseResponse getTestCaseFromTheList(TestCaseRequest testCaseRequest) {
         List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
         if(testCaseResponseList.isEmpty()) {

@@ -19,29 +19,28 @@ public class TestCaseTest extends TestBase {
     @Test
     public void createTestCase() {
         TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
-        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(token, testCaseRequest).get(0);
+        TestCaseResponse actualResponse = TestCaseAPI.createNewTestCaseInEmptyList(testCaseRequest).get(0);
         TestCaseResponse expectedResponse = TestCaseResponse.parseFullTestCaseResponse(testCaseRequest);
         TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
     }
 
     @Test
-    public void getCreatedTestCase() {
+    public void getTestCaseFromTheList() {
         createdCase = TestCaseAPI.createTestCase(token, TestCaseData.prepareTestCaseData());
         TestCaseResponse actualResponse = TestCaseAPI.getCreatedTestCase(createdCase.get(0).getId());
         TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCaseResponse(createdCase, createdCase.get(0).getId());
         TestCaseAssert.getTestCaseAssert(actualResponse, expectedResponse);
     }
 
-    @Test
-    public void getTestCaseFromTheList() {
-        TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
-        TestCaseResponse actualResponse = TestCaseAPI.getTestCaseFromTheList(testCaseRequest);
-    }
+//    @Test
+//    public void getTestCaseFromTheList() {
+//        TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+//        TestCaseResponse actualResponse = TestCaseAPI.getTestCaseFromTheList(testCaseRequest);
+//    }
 
     @Test
     public void getAllTestCases() {
         List<TestCaseResponse> testCaseResponseList = TestCaseAPI.getAllTestCases(token);
-        System.out.println(testCaseResponseList);
     }
 
     @Test
@@ -56,7 +55,8 @@ public class TestCaseTest extends TestBase {
     @Test
     public void deleteTestCase() {
         TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
-        TestCaseAPI.deleteTestCaseInTheList(testCaseRequest);
+        createdCase = TestCaseAPI.createNewTestCaseInEmptyList(testCaseRequest);
+        TestCaseAPI.deleteTestCase(token, createdCase.get(0).getId());
         List<TestCaseResponse> testCaseResponseList = TestCaseAPI.getAllTestCases(token);
     }
 

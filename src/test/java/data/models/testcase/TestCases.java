@@ -1,5 +1,6 @@
 package data.models.testcase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestCases {
