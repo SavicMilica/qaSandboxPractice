@@ -1,6 +1,7 @@
 package data.models.testcase;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -29,13 +30,14 @@ public class TestCaseResponse implements Serializable {
     private Integer candidateScenarioId;
     @SerializedName("test_steps")
     @Expose
-    private List<TestStepRequest> testSteps = null;
+    private List<TestStepResponse> testSteps = null;
     private final static long serialVersionUID = 587829184973605849L;
 
     public TestCaseResponse() {
     }
 
-    public TestCaseResponse(Integer id, Integer candidateId, String title, String expectedResult, String description, Boolean automated, Integer candidateScenarioId, List<TestStepRequest> testSteps) {
+    public TestCaseResponse(Integer id, Integer candidateId, String title, String expectedResult,
+                            String description, Boolean automated, Integer candidateScenarioId, List<TestStepResponse> testSteps) {
         super();
         this.id = id;
         this.candidateId = candidateId;
@@ -52,7 +54,14 @@ public class TestCaseResponse implements Serializable {
         testCaseResponse.setTitle(testCaseRequest.getTitle());
         testCaseResponse.setDescription(testCaseRequest.getDescription());
         testCaseResponse.setExpectedResult(testCaseRequest.getExpectedResult());
-        testCaseResponse.setTestSteps(testCaseRequest.getTestSteps());
+        List<TestStepResponse> testStepResponseList = new ArrayList<>();
+        for (int i = 0; i < testCaseRequest.getTestSteps().size(); i++) {
+            TestStepResponse testStepResponse = new TestStepResponse();
+            testStepResponse.setId(testCaseRequest.getTestSteps().get(i).getId());
+            testStepResponse.setValue(testCaseRequest.getTestSteps().get(i).getValue());
+            testStepResponseList.add(testStepResponse);
+        }
+        testCaseResponse.setTestSteps(testStepResponseList);
         testCaseResponse.setAutomated(testCaseRequest.getAutomated());
         return testCaseResponse;
     }
@@ -68,9 +77,9 @@ public class TestCaseResponse implements Serializable {
         return testCaseResponse;
     }
 
-    public static TestCaseResponse parseCreatedTestCaseResponse(List<TestCaseResponse> createdCase, Integer id) {
+    public static TestCaseResponse parseTestCase(TestCaseResponse createdCase) {
         TestCaseResponse testCaseResponse = new TestCaseResponse();
-        testCaseResponse.setId(id);
+        testCaseResponse.setId(createdCase.getId());
         testCaseResponse.setTitle(createdCase.get(0).getTitle());
         testCaseResponse.setDescription(createdCase.get(0).getDescription());
         testCaseResponse.setExpectedResult(createdCase.get(0).getExpectedResult());
@@ -135,11 +144,11 @@ public class TestCaseResponse implements Serializable {
         this.candidateScenarioId = candidateScenarioId;
     }
 
-    public List<TestStepRequest> getTestSteps() {
+    public List<TestStepResponse> getTestSteps() {
         return testSteps;
     }
 
-    public void setTestSteps(List<TestStepRequest> testSteps) {
+    public void setTestSteps(List<TestStepResponse> testSteps) {
         this.testSteps = testSteps;
     }
 }

@@ -2,46 +2,46 @@ package apimethods;
 
 import common.RestAssuredMethods;
 import constants.ApiEndpoints;
+import data.models.common.EmptyClass;
 import data.models.testcase.TestCaseRequest;
 import common.GsonSetup;
 import data.models.testcase.TestCaseRequestEdit;
 import data.models.testcase.TestCaseResponse;
-
 import java.util.List;
 
-import static common.TestBase.token;
-
 public class TestCaseAPI {
-    public static List<TestCaseResponse> createTestCase(String token, TestCaseRequest testCaseRequest) {
+    public static List<TestCaseResponse> createTestCase(String accessToken, TestCaseRequest testCaseRequest) {
         return GsonSetup.parseSuccessResponseAsListToModel
-                (RestAssuredMethods.post(token, testCaseRequest, ApiEndpoints.TEST_CASE),
+                (RestAssuredMethods.post(accessToken, testCaseRequest, ApiEndpoints.TEST_CASE),
                         TestCaseResponse[].class);
     }
 
-    public static TestCaseResponse getTestCase(String token, Integer testCaseId) {
+    public static TestCaseResponse getTestCase(String accessToken, Integer testCaseId) {
         return GsonSetup.convertJsonToClass
-                (RestAssuredMethods.get(token, ApiEndpoints.testCaseEndpoint(testCaseId)), TestCaseResponse.class);
+                (RestAssuredMethods.get(accessToken, ApiEndpoints.testCaseEndpoint(testCaseId)), TestCaseResponse.class);
     }
 
-    public static List<TestCaseResponse> getAllTestCases(String token) {
-        return GsonSetup.parseSuccessResponseAsListToModel
-                (RestAssuredMethods.get(token, ApiEndpoints.TEST_CASE), TestCaseResponse[].class);
-    }
-
-    public static List<TestCaseResponse> updateTestCase(String token, TestCaseRequestEdit testCaseRequest, Integer testCaseId) {
-        return GsonSetup.parseSuccessResponseAsListToModel
-                (RestAssuredMethods.put(token, testCaseRequest, ApiEndpoints.testCaseEndpoint(testCaseId)), TestCaseResponse[].class);
-    }
-
-    public static EmptyClass deleteTestCase(String token, Integer testCaseId) {
-        return GsonSetup.convertJsonToClass
-                (RestAssuredMethods.delete(token, ApiEndpoints.testCaseEndpoint(testCaseId)), EmptyClass.class);
-    }
-
-    public static EmptyClass getTestCaseWithError(String token, Integer testCaseId) {
+    public static ApiError getTestCaseWithError(String accessToken, Integer testCaseId) {
         return GsonSetup.convertErrorResponse
-                (RestAssuredMethods.get(token, ApiEndpoints.testCaseEndpoint(testCaseId)), EmptyClass.class);
+                (RestAssuredMethods.get(accessToken, ApiEndpoints.testCaseEndpoint(testCaseId)), ApiError.class);
     }
+
+    public static List<TestCaseResponse> getAllTestCases(String accessToken) {
+        return GsonSetup.parseSuccessResponseAsListToModel
+                (RestAssuredMethods.get(accessToken, ApiEndpoints.TEST_CASE), TestCaseResponse[].class);
+    }
+
+    public static List<TestCaseResponse> updateTestCase(String accessToken, TestCaseRequestEdit testCaseRequest, Integer testCaseId) {
+        return GsonSetup.parseSuccessResponseAsListToModel
+                (RestAssuredMethods.put(accessToken, testCaseRequest, ApiEndpoints.testCaseEndpoint(testCaseId)), TestCaseResponse[].class);
+    }
+
+    public static EmptyClass deleteTestCase(String accessToken, Integer testCaseId) {
+        return GsonSetup.convertJsonToClass
+                (RestAssuredMethods.delete(accessToken, ApiEndpoints.testCaseEndpoint(testCaseId)), EmptyClass.class);
+    }
+
+
 
     public static void deleteAllTestCases() {
         List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
@@ -50,29 +50,27 @@ public class TestCaseAPI {
         }
     }
 
-    public static List<TestCaseResponse> createNewTestCaseInEmptyList(TestCaseRequest testCaseRequest) {
-        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
-        if(testCaseResponseList.isEmpty()) {
-            return createTestCase(token, testCaseRequest);
-        } else {
+    public static List<TestCaseResponse> createNewTestCaseInEmptyList(String accessToken, TestCaseRequest testCaseRequest) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
+        if (!testCaseResponseList.isEmpty()) {
             deleteAllTestCases();
-            return createTestCase(token, testCaseRequest);
         }
+        return createTestCase(accessToken, testCaseRequest);
     }
 
-    public static TestCaseResponse getTestCaseFromTheList(TestCaseRequest testCaseRequest) {
-        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+    public static TestCaseResponse createTestCaseAndGetTestCase(String accessToken, TestCaseRequest testCaseRequest) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
+        Integer testCaseId;
         if(testCaseResponseList.isEmpty()) {
-            Integer testCaseId = createTestCase(token, testCaseRequest).get(0).getId();
-            return getTestCase(token, testCaseId);
+             testCaseId = createTestCase(accessToken, testCaseRequest).get(0).getId();
         } else {
-            Integer testCaseId = testCaseResponseList.get(0).getId();
-            return getTestCase(token, testCaseId);
+             testCaseId = testCaseResponseList.get(0).getId();
         }
+        return getTestCase(accessToken, testCaseId);
     }
 
-    public static TestCaseResponse getCreatedTestCase(Integer testCaseId) {
-        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+    public static TestCaseResponse getTestCaseFromList(String accessToken, Integer testCaseId) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
         for(int i = 0; i <testCaseResponseList.size(); i++) {
             if(testCaseResponseList.get(i).getId().equals(testCaseId)) {
                 return testCaseResponseList.get(i);
@@ -81,27 +79,32 @@ public class TestCaseAPI {
         return null;
     }
 
-    public static List<TestCaseResponse> updateTestCase(TestCaseRequest testCaseRequestCreate, TestCaseRequestEdit testCaseRequestUpdate) {
-        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+    public static List<TestCaseResponse> updateTestCase(String accessToken, TestCaseRequest testCaseRequestCreate,
+                                                        TestCaseRequestEdit testCaseRequestUpdate) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
+        Integer testCaseId;
         if(testCaseResponseList.isEmpty()) {
-            Integer testCaseId = createTestCase(token, testCaseRequestCreate).get(0).getId();
+            testCaseId = createTestCase(accessToken, testCaseRequestCreate).get(0).getId();
             testCaseRequestUpdate.setTestcaseId(testCaseId);
-            return updateTestCase(token, testCaseRequestUpdate, testCaseId);
         } else {
-            Integer testCaseId = testCaseResponseList.get(0).getId();
+            testCaseId = testCaseResponseList.get(0).getId();
             testCaseRequestUpdate.setTestcaseId(testCaseId);
-            return updateTestCase(token, testCaseRequestUpdate, testCaseId);
         }
+        return updateTestCase(accessToken, testCaseRequestUpdate, testCaseId);
+
     }
 
-    public static void deleteTestCaseInTheList(TestCaseRequest testCaseRequest) {
-        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+    public static void deleteTestCaseInTheList(String accessToken, TestCaseRequest testCaseRequest) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
+        Integer testCaseId;
         if(testCaseResponseList.isEmpty()) {
-            Integer testCaseId = createTestCase(token, testCaseRequest).get(0).getId();
-            deleteTestCase(token, testCaseId);
+            testCaseId = createTestCase(accessToken, testCaseRequest).get(0).getId();
         } else {
-            Integer testCaseId = testCaseResponseList.get(0).getId();
-            deleteTestCase(token, testCaseId);
+            testCaseId = testCaseResponseList.get(0).getId();
         }
+        deleteTestCase(accessToken, testCaseId);
     }
+
+    //TODO kreiraj metodu koja briše sve test caseve ako lista nije prazna
+    //TODO kreiraj metodu koja kreira Test case ukoliko lista nije prazna
 }
