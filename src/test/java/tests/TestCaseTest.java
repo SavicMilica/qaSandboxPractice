@@ -52,7 +52,7 @@ public class TestCaseTest extends TestBase {
 
     @Test
     public void deleteAllTestCases() {
-        TestCaseAPI.deleteAllTestCases();
+        TestCaseAPI.deleteAllTestCases(TestBase.token);
     }
 
 }

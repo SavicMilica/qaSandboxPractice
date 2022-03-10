@@ -41,19 +41,17 @@ public class TestCaseAPI {
                 (RestAssuredMethods.delete(accessToken, ApiEndpoints.testCaseEndpoint(testCaseId)), EmptyClass.class);
     }
 
-
-
-    public static void deleteAllTestCases() {
-        List<TestCaseResponse> testCaseResponseList = getAllTestCases(token);
+    public static void deleteAllTestCases(String accessToken) {
+        List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
         for(int i = 0; i < testCaseResponseList.size(); i++) {
-            deleteTestCase(token, testCaseResponseList.get(i).getId());
+            deleteTestCase(accessToken, testCaseResponseList.get(i).getId());
         }
     }
 
     public static List<TestCaseResponse> createNewTestCaseInEmptyList(String accessToken, TestCaseRequest testCaseRequest) {
         List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
         if (!testCaseResponseList.isEmpty()) {
-            deleteAllTestCases();
+            deleteAllTestCases(accessToken);
         }
         return createTestCase(accessToken, testCaseRequest);
     }
