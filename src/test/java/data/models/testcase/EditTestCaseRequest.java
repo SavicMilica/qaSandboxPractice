@@ -1,11 +1,11 @@
 package data.models.testcase;
 
-import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import data.models.testcase.teststep.TestStepRequest;
 
-public class TestCaseRequest implements Serializable {
+public class EditTestCaseRequest {
     @SerializedName("title")
     @Expose
     private String title;
@@ -21,18 +21,27 @@ public class TestCaseRequest implements Serializable {
     @SerializedName("automated")
     @Expose
     private Boolean automated;
-    private final static long serialVersionUID = -7555516253994603840L;
+    @SerializedName("candidate_scenario_id")
+    @Expose
+    private Integer candidateScenarioId;
+    @SerializedName("testcaseId")
+    @Expose
+    private Integer testcaseId;
+    private final static long serialVersionUID = -907532978306528376L;
 
-    public TestCaseRequest() {
+    public EditTestCaseRequest() {
     }
 
-    public TestCaseRequest(String title, String description, String expectedResult, List<TestStepRequest> testSteps, Boolean automated) {
+    public EditTestCaseRequest(String title, String description, String expectedResult, List<TestStepRequest> testSteps,
+                               Boolean automated, Integer candidateScenarioId, Integer testcaseId) {
         super();
         this.title = title;
         this.description = description;
         this.expectedResult = expectedResult;
         this.testSteps = testSteps;
         this.automated = automated;
+        this.candidateScenarioId = candidateScenarioId;
+        this.testcaseId = testcaseId;
     }
 
     public String getTitle() {
@@ -75,4 +84,21 @@ public class TestCaseRequest implements Serializable {
         this.automated = automated;
     }
 
+    public Integer getCandidateScenarioId() {
+        return candidateScenarioId;
+    }
+
+    public void setCandidateScenarioId(Integer candidateScenarioId) {
+        this.candidateScenarioId = candidateScenarioId;
+    }
+
+    public Integer getTestcaseId() {
+        return testcaseId;
+    }
+
+    public void setTestcaseId(Integer testcaseId) {
+        this.testcaseId = testcaseId;
+    }
+
 }
+

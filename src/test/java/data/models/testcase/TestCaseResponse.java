@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import data.models.testcase.teststep.TestStepResponse;
 
 public class TestCaseResponse implements Serializable {
     @SerializedName("id")
@@ -49,11 +50,13 @@ public class TestCaseResponse implements Serializable {
         this.testSteps = testSteps;
     }
 
-    public static TestCaseResponse parseFullTestCaseResponse(TestCaseRequest testCaseRequest) {
+    public static TestCaseResponse parseCreatedTestCaseWithId(CreateTestCaseRequest testCaseRequest, Integer testCaseId) {
         TestCaseResponse testCaseResponse = new TestCaseResponse();
+        testCaseResponse.setId(testCaseId);
         testCaseResponse.setTitle(testCaseRequest.getTitle());
         testCaseResponse.setDescription(testCaseRequest.getDescription());
         testCaseResponse.setExpectedResult(testCaseRequest.getExpectedResult());
+
         List<TestStepResponse> testStepResponseList = new ArrayList<>();
         for (int i = 0; i < testCaseRequest.getTestSteps().size(); i++) {
             TestStepResponse testStepResponse = new TestStepResponse();
@@ -62,31 +65,51 @@ public class TestCaseResponse implements Serializable {
             testStepResponseList.add(testStepResponse);
         }
         testCaseResponse.setTestSteps(testStepResponseList);
+
         testCaseResponse.setAutomated(testCaseRequest.getAutomated());
         return testCaseResponse;
     }
 
-    public static TestCaseResponse parseFullTestCaseResponseForUpdate(TestCaseRequestEdit testCaseRequest) {
+    public static TestCaseResponse parseCreatedTestCase(CreateTestCaseRequest testCaseRequest) {
         TestCaseResponse testCaseResponse = new TestCaseResponse();
-        testCaseResponse.setId(testCaseRequest.getTestcaseId());
         testCaseResponse.setTitle(testCaseRequest.getTitle());
         testCaseResponse.setDescription(testCaseRequest.getDescription());
         testCaseResponse.setExpectedResult(testCaseRequest.getExpectedResult());
-        testCaseResponse.setTestSteps(testCaseRequest.getTestSteps());
+
+        List<TestStepResponse> testStepResponseList = new ArrayList<>();
+        for (int i = 0; i < testCaseRequest.getTestSteps().size(); i++) {
+            TestStepResponse testStepResponse = new TestStepResponse();
+            testStepResponse.setId(testCaseRequest.getTestSteps().get(i).getId());
+            testStepResponse.setValue(testCaseRequest.getTestSteps().get(i).getValue());
+            testStepResponseList.add(testStepResponse);
+        }
+        testCaseResponse.setTestSteps(testStepResponseList);
+
         testCaseResponse.setAutomated(testCaseRequest.getAutomated());
         return testCaseResponse;
     }
 
-    public static TestCaseResponse parseTestCase(TestCaseResponse createdCase) {
+    public static TestCaseResponse parseEditedTestCase(EditTestCaseRequest testCaseRequest, Integer testCaseId) {
         TestCaseResponse testCaseResponse = new TestCaseResponse();
-        testCaseResponse.setId(createdCase.getId());
-        testCaseResponse.setTitle(createdCase.get(0).getTitle());
-        testCaseResponse.setDescription(createdCase.get(0).getDescription());
-        testCaseResponse.setExpectedResult(createdCase.get(0).getExpectedResult());
-        testCaseResponse.setTestSteps(createdCase.get(0).getTestSteps());
-        testCaseResponse.setAutomated(createdCase.get(0).getAutomated());
+        testCaseResponse.setTitle(testCaseRequest.getTitle());
+        testCaseResponse.setDescription(testCaseRequest.getDescription());
+        testCaseResponse.setExpectedResult(testCaseRequest.getExpectedResult());
+
+        List<TestStepResponse> testStepResponseList = new ArrayList<>();
+        for(int i = 0; i < testCaseRequest.getTestSteps().size(); i++) {
+            TestStepResponse testStepResponse = new TestStepResponse();
+            testStepResponse.setId(testCaseRequest.getTestSteps().get(i).getId());
+            testStepResponse.setValue(testCaseRequest.getTestSteps().get(i).getValue());
+            testStepResponseList.add(testStepResponse);
+        }
+
+        testCaseResponse.setTestSteps(testStepResponseList);
+        testCaseResponse.setAutomated(testCaseRequest.getAutomated());
+        testCaseResponse.setCandidateScenarioId(testCaseRequest.getCandidateScenarioId());
+        testCaseResponse.setId(testCaseId);
         return testCaseResponse;
     }
+
 
     public Integer getId() {
         return id;

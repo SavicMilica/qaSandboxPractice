@@ -1,10 +1,12 @@
 package data.models.testcase;
 
+import java.io.Serializable;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import data.models.testcase.teststep.TestStepRequest;
 
-public class TestCaseRequestEdit {
+public class CreateTestCaseRequest implements Serializable {
     @SerializedName("title")
     @Expose
     private String title;
@@ -20,26 +22,19 @@ public class TestCaseRequestEdit {
     @SerializedName("automated")
     @Expose
     private Boolean automated;
-    @SerializedName("candidate_scenario_id")
-    @Expose
-    private Integer candidateScenarioId;
-    @SerializedName("testcaseId")
-    @Expose
-    private Integer testcaseId;
-    private final static long serialVersionUID = -907532978306528376L;
+    private final static long serialVersionUID = -7555516253994603840L;
 
-    public TestCaseRequestEdit() {
+    public CreateTestCaseRequest() {
     }
 
-    public TestCaseRequestEdit(String title, String description, String expectedResult, List<TestStepRequest> testSteps, Boolean automated, Integer candidateScenarioId, Integer testcaseId) {
+    public CreateTestCaseRequest(String title, String description, String expectedResult, List<TestStepRequest> testSteps,
+                                 Boolean automated) {
         super();
         this.title = title;
         this.description = description;
         this.expectedResult = expectedResult;
         this.testSteps = testSteps;
         this.automated = automated;
-        this.candidateScenarioId = candidateScenarioId;
-        this.testcaseId = testcaseId;
     }
 
     public String getTitle() {
@@ -82,21 +77,4 @@ public class TestCaseRequestEdit {
         this.automated = automated;
     }
 
-    public Integer getCandidateScenarioId() {
-        return candidateScenarioId;
-    }
-
-    public void setCandidateScenarioId(Integer candidateScenarioId) {
-        this.candidateScenarioId = candidateScenarioId;
-    }
-
-    public Integer getTestcaseId() {
-        return testcaseId;
-    }
-
-    public void setTestcaseId(Integer testcaseId) {
-        this.testcaseId = testcaseId;
-    }
-
 }
-

@@ -11,6 +11,6 @@ public class TestBase {
     @BeforeSuite(alwaysRun = true)
     public static void setupBaseUrl() {
         RestAssured.baseURI = "https://qa-sandbox.ni.htec.rs";
-        token = LoginToken.getToken();
+        token = LoginToken.login();
     }
 }

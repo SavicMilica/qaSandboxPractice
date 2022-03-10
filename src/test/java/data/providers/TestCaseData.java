@@ -1,8 +1,9 @@
 package data.providers;
 
-import data.models.testcase.TestCaseRequest;
-import data.models.testcase.TestCaseRequestEdit;
-import data.models.testcase.TestStepRequest;
+import constants.KeyParameters;
+import data.models.testcase.CreateTestCaseRequest;
+import data.models.testcase.EditTestCaseRequest;
+import data.models.testcase.teststep.TestStepRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +11,16 @@ import java.util.List;
 
 public class TestCaseData {
 
-    public static TestCaseRequest prepareTestCaseData() {
-        TestCaseRequest testCaseRequest = new TestCaseRequest();
-        testCaseRequest.setTitle("This is title");
-        testCaseRequest.setDescription("This is description");
-        testCaseRequest.setExpectedResult("This is expected result");
+    public static CreateTestCaseRequest prepareTestCaseData() {
+        CreateTestCaseRequest testCaseRequest = new CreateTestCaseRequest();
+        testCaseRequest.setTitle(KeyParameters.TITLE);
+        testCaseRequest.setDescription(KeyParameters.DESCRIPTION);
+        testCaseRequest.setExpectedResult(KeyParameters.EXPECTED_RESULT);
 
         List<TestStepRequest> testStepList = new ArrayList<>();
         TestStepRequest testStep = new TestStepRequest();
-        testStep.setValue("Test step value");
-        testStep.setId(1);
+        testStep.setValue(KeyParameters.TEST_STEP);
+        testStep.setId(KeyParameters.TEST_STEP_ID);
         testStepList.add(testStep);
         testCaseRequest.setTestSteps(testStepList);
 
@@ -28,21 +29,21 @@ public class TestCaseData {
         return testCaseRequest;
     }
 
-    public static TestCaseRequestEdit prepareTestCaseDataForUpdate(Integer testcaseId) {
-        TestCaseRequestEdit testCaseRequestEdit = new TestCaseRequestEdit();
-        testCaseRequestEdit.setTitle("This is updated title");
-        testCaseRequestEdit.setDescription("This is updated description");
-        testCaseRequestEdit.setExpectedResult("This is updated expected result");
+    public static EditTestCaseRequest prepareTestCaseDataForUpdate(Integer testcaseId) {
+        EditTestCaseRequest testCaseRequestEdit = new EditTestCaseRequest();
+        testCaseRequestEdit.setTitle(KeyParameters.TITLE_UPDATE);
+        testCaseRequestEdit.setDescription(KeyParameters.DESCRIPTION_UPDATE);
+        testCaseRequestEdit.setExpectedResult(KeyParameters.EXPECTED_RESULT_UPDATE);
 
         List<TestStepRequest> testStepList = new ArrayList<>();
         TestStepRequest testStep = new TestStepRequest();
-        testStep.setValue("Test step value - updated");
-        testStep.setId(1);
+        testStep.setValue(KeyParameters.TEST_STEP_UPDATE);
+        testStep.setId(KeyParameters.TEST_STEP_ID);
         testStepList.add(testStep);
         testCaseRequestEdit.setTestSteps(testStepList);
 
         testCaseRequestEdit.setAutomated(false);
-        testCaseRequestEdit.setCandidateScenarioId(446);
+        testCaseRequestEdit.setCandidateScenarioId(KeyParameters.CANDIDATE_SCENARIO_ID);
         testCaseRequestEdit.setTestcaseId(testcaseId);
 
         return testCaseRequestEdit;
