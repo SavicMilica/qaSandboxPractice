@@ -3,10 +3,7 @@ package tests;
 import apimethods.TestCaseAPI;
 import asserts.TestCaseAssert;
 import common.TestBase;
-import data.models.testcase.ApiError;
-import data.models.testcase.CreateTestCaseRequest;
-import data.models.testcase.EditTestCaseRequest;
-import data.models.testcase.TestCaseResponse;
+import data.models.testcase.*;
 import data.providers.TestCaseData;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -17,7 +14,7 @@ public class TestCaseTest extends TestBase {
 
     @BeforeTest
     public void deleteAllTestCases() {
-        TestCaseAPI.deleteAllTestCases(TestBase.token);
+        TestCaseAPI.deleteAllTestCasesIfListNotEmpty(TestBase.token);
     }
 
     @Test
@@ -26,6 +23,29 @@ public class TestCaseTest extends TestBase {
         TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
         TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
         TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
+    }
+
+    @Test(dataProvider = "prepareTestCase", dataProviderClass = TestCaseData.class)
+    public void verifyCannotCreateTestCaseWithoutRequiredField(CreateTestCaseRequest testCaseRequest, ApiRequiredFieldError expectedError) {
+        ApiRequiredFieldError actualError = TestCaseAPI.createTestCaseWithError(TestBase.token, testCaseRequest);
+        TestCaseAssert.createTestCaseWithoutRequiredField(actualError, expectedError);
+    }
+
+    @Test
+    public void verifyCanCreateTestCaseWithoutDescription() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseDataWithoutDescription();
+        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
+        TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
+    }
+
+    @Test
+    public void verifyCannotCreateTestCaseWithSameTitle() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        TestCaseAPI.createTestCase(TestBase.token, testCaseRequest);
+        ApiRequiredFieldError actualError = TestCaseAPI.createTestCaseWithError(TestBase.token, testCaseRequest);
+        ApiRequiredFieldError expectedError = ApiRequiredFieldError.parseTitleError("Test case name already exist");
+        TestCaseAssert.createTestCaseWithTwoSameTitles(actualError, expectedError);
     }
 
     @Test

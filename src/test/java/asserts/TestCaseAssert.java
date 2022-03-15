@@ -1,5 +1,6 @@
 package asserts;
 
+import data.models.testcase.ApiRequiredFieldError;
 import tests.DeleteTestCaseResponse;
 import data.models.testcase.ApiError;
 import data.models.testcase.TestCaseResponse;
@@ -105,6 +106,23 @@ public class TestCaseAssert {
     public static void DeleteSuccessMessage(DeleteTestCaseResponse actualResponse, DeleteTestCaseResponse expectedResponse) {
         SoftAssert softAssert = new SoftAssert();
         softAssert.assertEquals(actualResponse.getSuccess(), expectedResponse.getSuccess(), "success message didn't match");
+        softAssert.assertAll();
+    }
+
+    public static void createTestCaseWithoutRequiredField(ApiRequiredFieldError actualError, ApiRequiredFieldError expectedError) {
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(actualError.getTitle(), expectedError.getTitle(), "title error message is not the same");
+        softAssert.assertEquals(actualError.getExpectedResult(), expectedError.getExpectedResult(), "expected result error message is not the same");
+        softAssert.assertEquals(actualError.getTestSteps(), expectedError.getTestSteps(), "test step error message is not the same");
+        softAssert.assertAll();
+    }
+
+    public static void createTestCaseWithTwoSameTitles(ApiRequiredFieldError actualError, ApiRequiredFieldError expectedError) {
+        SoftAssert softAssert = new SoftAssert();
+        if(actualError == null) {
+            Assert.fail("There is no actual error");
+        }
+        softAssert.assertEquals(actualError.getTitle(), expectedError.getTitle(), "error message is not the same");
         softAssert.assertAll();
     }
 }
