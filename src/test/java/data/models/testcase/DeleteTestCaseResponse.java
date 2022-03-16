@@ -1,4 +1,4 @@
-package tests;
+package data.models.testcase;
 
 import java.io.Serializable;
 import com.google.gson.annotations.Expose;

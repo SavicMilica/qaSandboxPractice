@@ -1,8 +1,13 @@
 package data.models.testcase.teststep;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import common.RandomStringGenerator;
+import constants.KeyParameters;
 
 public class TestStepRequest implements Serializable {
     @SerializedName("id")
@@ -21,6 +26,18 @@ public class TestStepRequest implements Serializable {
         this.id = id;
         this.value = value;
     }
+
+    public static List<TestStepRequest> createListOfTestSteps(Integer numberOfSteps) {
+        List<TestStepRequest> testStepRequestList = new ArrayList<>();
+        TestStepRequest testStepRequest = new TestStepRequest();
+        for(int i = 0; i < numberOfSteps; i++) {
+            testStepRequest.setId(i);
+            testStepRequest.setValue(KeyParameters.TEST_STEP);
+            testStepRequestList.add(testStepRequest);
+        }
+        return testStepRequestList;
+    }
+
 
     public Integer getId() {
         return id;

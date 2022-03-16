@@ -1,12 +1,13 @@
 package apimethods;
 
 import common.RestAssuredMethods;
-import common.TestBase;
 import constants.ApiEndpoints;
 import data.models.testcase.*;
-import org.testng.Assert;
-import tests.DeleteTestCaseResponse;
+import data.models.testcase.DeleteTestCaseResponse;
 import common.GsonSetup;
+import data.models.testcase.errors.ApiError;
+import data.models.testcase.errors.ApiRequiredFieldError;
+import data.models.testcase.errors.TestStepErrors;
 
 import java.util.List;
 
@@ -20,6 +21,11 @@ public class TestCaseAPI {
     public static ApiRequiredFieldError createTestCaseWithError(String accessToken, CreateTestCaseRequest testCaseRequest) {
         return GsonSetup.convertErrorResponse
                 (RestAssuredMethods.post(accessToken, testCaseRequest, ApiEndpoints.TEST_CASE), ApiRequiredFieldError.class);
+    }
+
+    public static TestStepErrors createTestCaseWithTestStepError(String accessToken, CreateTestCaseRequest testCaseRequest) {
+        return GsonSetup.convertErrorResponse
+                (RestAssuredMethods.post(accessToken, testCaseRequest, ApiEndpoints.TEST_CASE), TestStepErrors.class);
     }
 
     public static TestCaseResponse getTestCase(String accessToken, Integer testCaseId) {
@@ -125,15 +131,6 @@ public class TestCaseAPI {
         return null;
     }
 
-//    public static ApiRequiredFieldError cannotCreateTestCaseWithSameTitle(String accessToken, CreateTestCaseRequest testCaseRequest, String titleError) {
-//        List<TestCaseResponse> testCaseResponseList = getAllTestCases(accessToken);
-//        for(int i = 0; i < testCaseResponseList.size(); i++) {
-//            if(testCaseResponseList.get(i).getTitle().equals(testCaseRequest.getTitle())) {
-//                return ApiRequiredFieldError.parseTitleError(titleError);
-//            }
-//        }
-//        return null;
-//    }
 
     //TODO kreiraj metodu koja briše sve test caseve ako lista nije prazna
     //TODO kreiraj metodu koja kreira Test case ukoliko lista nije prazna

@@ -1,6 +1,9 @@
-package data.models.testcase;
+package data.models.testcase.errors;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 

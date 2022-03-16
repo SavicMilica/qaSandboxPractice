@@ -1,4 +1,4 @@
-package data.models.testcase;
+package data.models.testcase.errors;
 
 import java.io.Serializable;
 import com.google.gson.annotations.Expose;
@@ -14,14 +14,18 @@ public class ApiRequiredFieldError implements Serializable {
     @SerializedName("test_steps")
     @Expose
     private String testSteps;
+    @SerializedName("description")
+    @Expose
+    private String description;
     private final static long serialVersionUID = -7199131548809179334L;
 
     public ApiRequiredFieldError() {
     }
 
-    public ApiRequiredFieldError(String title, String expectedResult, String testSteps) {
+    public ApiRequiredFieldError(String title, String description, String expectedResult, String testSteps) {
         super();
         this.title = title;
+        this.description = description;
         this.expectedResult = expectedResult;
         this.testSteps = testSteps;
     }
@@ -32,6 +36,14 @@ public class ApiRequiredFieldError implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getExpectedResult() {
@@ -62,5 +74,4 @@ public class ApiRequiredFieldError implements Serializable {
         apiRequiredFieldError.setTitle(titleError);
         return apiRequiredFieldError;
     }
-
 }

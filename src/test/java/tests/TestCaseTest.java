@@ -3,7 +3,12 @@ package tests;
 import apimethods.TestCaseAPI;
 import asserts.TestCaseAssert;
 import common.TestBase;
+import constants.KeyParameters;
 import data.models.testcase.*;
+import data.models.testcase.errors.ApiError;
+import data.models.testcase.errors.ApiRequiredFieldError;
+import data.models.testcase.errors.TestStepError;
+import data.models.testcase.errors.TestStepErrors;
 import data.providers.TestCaseData;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -32,6 +37,14 @@ public class TestCaseTest extends TestBase {
     }
 
     @Test
+    public void verifyCannotAddTestStepWithMoreThan300Characters() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestStepData();
+        TestStepError actualError = TestCaseAPI.createTestCaseWithTestStepError(TestBase.token, testCaseRequest).getStepErrors().get(0);
+        TestStepError expectedError = TestStepError.parseStepError(KeyParameters.TEST_STEP_ID, "Test step can not have more than 300 characters (301)");
+        TestCaseAssert.createTestStepWithMoreThan300Characters(actualError, expectedError);
+    }
+
+    @Test
     public void verifyCanCreateTestCaseWithoutDescription() {
         CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseDataWithoutDescription();
         TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
@@ -46,6 +59,14 @@ public class TestCaseTest extends TestBase {
         ApiRequiredFieldError actualError = TestCaseAPI.createTestCaseWithError(TestBase.token, testCaseRequest);
         ApiRequiredFieldError expectedError = ApiRequiredFieldError.parseTitleError("Test case name already exist");
         TestCaseAssert.createTestCaseWithTwoSameTitles(actualError, expectedError);
+    }
+
+    @Test
+    public void verifyCannotCreateTestCaseWith51TestSteps() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseDataWithVariousNumberOfTestSteps(51);
+        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
+        TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
     }
 
     @Test

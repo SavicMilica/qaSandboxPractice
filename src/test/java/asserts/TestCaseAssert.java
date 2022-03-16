@@ -1,9 +1,11 @@
 package asserts;
 
-import data.models.testcase.ApiRequiredFieldError;
-import tests.DeleteTestCaseResponse;
-import data.models.testcase.ApiError;
+import data.models.testcase.errors.ApiRequiredFieldError;
+import data.models.testcase.DeleteTestCaseResponse;
+import data.models.testcase.errors.ApiError;
 import data.models.testcase.TestCaseResponse;
+import data.models.testcase.errors.TestStepError;
+import data.models.testcase.errors.TestStepErrors;
 import data.models.testcase.teststep.TestStepResponse;
 import org.testng.Assert;
 import org.testng.asserts.SoftAssert;
@@ -123,6 +125,16 @@ public class TestCaseAssert {
             Assert.fail("There is no actual error");
         }
         softAssert.assertEquals(actualError.getTitle(), expectedError.getTitle(), "error message is not the same");
+        softAssert.assertAll();
+    }
+
+    public static void createTestStepWithMoreThan300Characters(TestStepError actualError, TestStepError expectedError) {
+        SoftAssert softAssert = new SoftAssert();
+        if(actualError == null) {
+            Assert.fail("There is no actual error");
+        }
+        softAssert.assertEquals(actualError.getError(), expectedError.getError(), "error message is not the same");
+        softAssert.assertEquals(actualError.getId(), expectedError.getId(), "id didn't match");
         softAssert.assertAll();
     }
 }
