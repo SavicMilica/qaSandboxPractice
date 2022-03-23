@@ -1,70 +1,111 @@
 package tests;
 
-import apimethods.EmptyClass;
 import apimethods.TestCaseAPI;
 import asserts.TestCaseAssert;
 import common.TestBase;
-import data.models.testcase.TestCaseRequest;
-import data.models.testcase.TestCaseRequestEdit;
-import data.models.testcase.TestCaseResponse;
+import constants.KeyParameters;
+import data.models.testcase.*;
+import data.models.testcase.errors.ApiError;
+import data.models.testcase.errors.ApiRequiredFieldError;
+import data.models.testcase.errors.TestStepError;
+import data.models.testcase.errors.TestStepErrors;
 import data.providers.TestCaseData;
-import org.testng.Assert;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
-
 public class TestCaseTest extends TestBase {
 
-    List<TestCaseResponse> createdCase;
+    @BeforeTest
+    public void deleteAllTestCases() {
+        TestCaseAPI.deleteAllTestCasesIfListNotEmpty(TestBase.token);
+    }
 
     @Test
-    public void createTestCase() {
-        TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
-        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(token, testCaseRequest).get(0);
-        TestCaseResponse expectedResponse = TestCaseResponse.parseFullTestCaseResponse(testCaseRequest);
+    public void verifyCanCreateTestCase() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
+        TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
+    }
+
+    @Test(dataProvider = "prepareTestCase", dataProviderClass = TestCaseData.class)
+    public void verifyCannotCreateTestCaseWithoutRequiredField(CreateTestCaseRequest testCaseRequest, ApiRequiredFieldError expectedError) {
+        ApiRequiredFieldError actualError = TestCaseAPI.createTestCaseWithError(TestBase.token, testCaseRequest);
+        TestCaseAssert.createTestCaseWithoutRequiredField(actualError, expectedError);
+    }
+
+    @Test
+    public void verifyCannotAddTestStepWithMoreThan300Characters() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestStepData();
+        TestStepError actualError = TestCaseAPI.createTestCaseWithTestStepError(TestBase.token, testCaseRequest).getStepErrors().get(0);
+        TestStepError expectedError = TestStepError.parseStepError(KeyParameters.TEST_STEP_ID, "Test step can not have more than 300 characters (301)");
+        TestCaseAssert.createTestStepWithMoreThan300Characters(actualError, expectedError);
+    }
+
+    @Test
+    public void verifyCanCreateTestCaseWithoutDescription() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseDataWithoutDescription();
+        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
         TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
     }
 
     @Test
-    public void getTestCase() {
-        createdCase = TestCaseAPI.createTestCase(token, TestCaseData.prepareTestCaseData());
-        TestCaseResponse actualResponse = TestCaseAPI.getTestCase(token, createdCase.get(0).getId());
-        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCaseResponse(createdCase, createdCase.get(0).getId());
+    public void verifyCannotCreateTestCaseWithSameTitle() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        TestCaseAPI.createTestCase(TestBase.token, testCaseRequest);
+        ApiRequiredFieldError actualError = TestCaseAPI.createTestCaseWithError(TestBase.token, testCaseRequest);
+        ApiRequiredFieldError expectedError = ApiRequiredFieldError.parseTitleError("Test case name already exist");
+        TestCaseAssert.createTestCaseWithTwoSameTitles(actualError, expectedError);
+    }
+
+    @Test
+    public void verifyCannotCreateTestCaseWith51TestSteps() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseDataWithVariousNumberOfTestSteps(51);
+        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
+        TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
+    }
+
+    @Test
+    public void verifyListOfTestCases() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        TestCaseResponse createdCase = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse actualResponse = TestCaseAPI.getTestCaseFromList(TestBase.token, createdCase.getId());
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCaseWithId(testCaseRequest, createdCase.getId());
         TestCaseAssert.getTestCaseAssert(actualResponse, expectedResponse);
     }
 
     @Test
-    public void updateTestCase() {
-        TestCaseRequest testCaseRequestCreate = TestCaseData.prepareTestCaseData();
-        TestCaseRequestEdit testCaseRequestUpdate = TestCaseData.prepareTestCaseDataForUpdate(null);
-        TestCaseResponse actualResponse = TestCaseAPI.updateTestCase(testCaseRequestCreate, testCaseRequestUpdate).get(0);
-        TestCaseResponse expectedResponse = TestCaseResponse.parseFullTestCaseResponseForUpdate(testCaseRequestUpdate);
+    public void verifyCanUpdateTestCase() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        TestCaseResponse createdCase = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        EditTestCaseRequest testCaseRequestUpdate = TestCaseData.prepareTestCaseDataForUpdate(null);
+        TestCaseResponse actualResponse = TestCaseAPI.updateTestCase(TestBase.token, testCaseRequestUpdate, createdCase.getId()).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseEditedTestCase(testCaseRequestUpdate, createdCase.getId());
         TestCaseAssert.updateTestCaseAssert(actualResponse, expectedResponse);
     }
 
     @Test
-    public void deleteTestCase() {
-        createdCase = TestCaseAPI.createTestCase(token, TestCaseData.prepareTestCaseData());
-        TestCaseAPI.deleteTestCase(token, createdCase.get(0).getId());
-        EmptyClass emptyClass = TestCaseAPI.getTestCaseWithError(token, createdCase.get(0).getId());
-        Assert.assertNotNull(emptyClass);
+    public void verifyDeleteTestCase() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        List<TestCaseResponse> createdCase = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest);
+        TestCaseAPI.deleteTestCase(TestBase.token, createdCase.get(0).getId());
+        ApiError actualError = TestCaseAPI.getTestCaseWithError(TestBase.token, createdCase.get(0).getId());
+        ApiError expectedError = ApiError.parseError("Test case not found");
+
+        TestCaseAssert.deleteTestCase(actualError, expectedError);
     }
 
     @Test
-    public void getAllTestCases() {
-        List<TestCaseResponse> testCaseResponseList = TestCaseAPI.getAllTestCases(token);
-        System.out.println(testCaseResponseList);
+    public void verifyDeleteSuccessMessage() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
+        List<TestCaseResponse> createdCase = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest);
+        DeleteTestCaseResponse actualResponse = TestCaseAPI.deleteTestCase(TestBase.token, createdCase.get(0).getId());
+        DeleteTestCaseResponse expectedResponse = DeleteTestCaseResponse.parseDeleteSuccess("Test case successfully removed");
+        TestCaseAssert.DeleteSuccessMessage(actualResponse, expectedResponse);
     }
 
-    @Test
-    public void deleteAllTestCases() {
-        TestCaseAPI.deleteAllTestCases();
-    }
-
-    @Test
-    public void createTestCaseIfTheListIsEmpty() {
-        TestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseData();
-        TestCaseAPI.createTestCaseIfTheListIsEmpty(testCaseRequest);
-    }
 }

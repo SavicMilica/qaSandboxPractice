@@ -1,7 +1,12 @@
-package data.models.testcase;
+package data.models.testcase.teststep;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import common.RandomStringGenerator;
+import constants.KeyParameters;
 
 public class TestStepResponse implements Serializable {
         @SerializedName("id")
@@ -48,4 +53,5 @@ public class TestStepResponse implements Serializable {
         public void setValue(String value) {
             this.value = value;
         }
+
 }

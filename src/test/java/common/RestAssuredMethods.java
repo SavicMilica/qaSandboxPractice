@@ -1,10 +1,7 @@
 package common;
 
 import com.google.gson.GsonBuilder;
-import constants.KeyParameters;
 import io.restassured.http.ContentType;
-import io.restassured.http.Header;
-import io.restassured.http.Headers;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;

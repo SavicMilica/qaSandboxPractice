@@ -6,8 +6,8 @@ import data.providers.LoginData;
 
 public class LoginToken {
 
-    public static String getToken() {
+    public static String login() {
         LoginRequest loginRequest = LoginData.prepareLoginData();
-        return LoginAPI.createToken(loginRequest).getToken();
+        return LoginAPI.login(loginRequest).getToken();
     }
 }
