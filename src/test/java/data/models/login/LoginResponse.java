@@ -26,6 +26,7 @@ public class LoginResponse implements Serializable {
         this.refreshToken = refreshToken;
     }
 
+
     public Boolean getSuccess() {
         return success;
     }

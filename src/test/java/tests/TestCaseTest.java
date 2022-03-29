@@ -8,7 +8,6 @@ import data.models.testcase.*;
 import data.models.testcase.errors.ApiError;
 import data.models.testcase.errors.ApiRequiredFieldError;
 import data.models.testcase.errors.TestStepError;
-import data.models.testcase.errors.TestStepErrors;
 import data.providers.TestCaseData;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -30,10 +29,17 @@ public class TestCaseTest extends TestBase {
         TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
     }
 
-    @Test(dataProvider = "prepareTestCase", dataProviderClass = TestCaseData.class)
+    @Test(dataProvider = "prepareTestCaseWithError", dataProviderClass = TestCaseData.class)
     public void verifyCannotCreateTestCaseWithoutRequiredField(CreateTestCaseRequest testCaseRequest, ApiRequiredFieldError expectedError) {
         ApiRequiredFieldError actualError = TestCaseAPI.createTestCaseWithError(TestBase.token, testCaseRequest);
         TestCaseAssert.createTestCaseWithoutRequiredField(actualError, expectedError);
+    }
+
+    @Test(dataProvider = "prepareTestCaseWithDifferentNumberOfCharacters", dataProviderClass = TestCaseData.class)
+    public void verifyCanCreateTestCaseWithDifferentNumberOfCharacters(CreateTestCaseRequest testCaseRequest) {
+        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
+        TestCaseAssert.createTestCaseWithDifferentNumberOfCharacters(actualResponse, expectedResponse);
     }
 
     @Test
@@ -66,6 +72,14 @@ public class TestCaseTest extends TestBase {
         CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseDataWithVariousNumberOfTestSteps(51);
         TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
         TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
+        TestCaseAssert.createTestCaseWith51TestSteps(actualResponse, expectedResponse);
+    }
+
+    @Test
+    public void verifyCanCreateTestCaseWithLessThan51TestSteps() {
+        CreateTestCaseRequest testCaseRequest = TestCaseData.prepareTestCaseDataWithVariousNumberOfTestSteps(50);
+        TestCaseResponse actualResponse = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
+        TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCase(testCaseRequest);
         TestCaseAssert.createTestCaseAssert(actualResponse, expectedResponse);
     }
 
@@ -75,7 +89,7 @@ public class TestCaseTest extends TestBase {
         TestCaseResponse createdCase = TestCaseAPI.createTestCase(TestBase.token, testCaseRequest).get(0);
         TestCaseResponse actualResponse = TestCaseAPI.getTestCaseFromList(TestBase.token, createdCase.getId());
         TestCaseResponse expectedResponse = TestCaseResponse.parseCreatedTestCaseWithId(testCaseRequest, createdCase.getId());
-        TestCaseAssert.getTestCaseAssert(actualResponse, expectedResponse);
+        TestCaseAssert.compareTestCaseWithId(actualResponse, expectedResponse);
     }
 
     @Test
@@ -85,7 +99,7 @@ public class TestCaseTest extends TestBase {
         EditTestCaseRequest testCaseRequestUpdate = TestCaseData.prepareTestCaseDataForUpdate(null);
         TestCaseResponse actualResponse = TestCaseAPI.updateTestCase(TestBase.token, testCaseRequestUpdate, createdCase.getId()).get(0);
         TestCaseResponse expectedResponse = TestCaseResponse.parseEditedTestCase(testCaseRequestUpdate, createdCase.getId());
-        TestCaseAssert.updateTestCaseAssert(actualResponse, expectedResponse);
+        TestCaseAssert.compareTestCaseWithId(actualResponse, expectedResponse);
     }
 
     @Test
