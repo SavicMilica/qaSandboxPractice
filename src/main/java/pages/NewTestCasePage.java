@@ -7,7 +7,7 @@ public class NewTestCasePage {
 
     private WebDriver driver;
     private By titleField = By.name("title");
-    private By descriptionField = By.name("description");
+    private By descriptionField = By.xpath("//textarea[@name='description' and @placeholder='Description']");
     private By expectedResultField = By.name("expected_result");
     private By testStepField = By.id("step-0");
     private By addTestStepButton = By.linkText("Add Test Step");

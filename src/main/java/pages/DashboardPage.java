@@ -6,16 +6,16 @@ import org.openqa.selenium.WebDriver;
 public class DashboardPage {
 
     private WebDriver driver;
-    private By testCaseCard = By.xpath("//div[@class='main']//descendant::a[@href='/testcases']");
-    private By profileCard = By.xpath("//div[@class='card-grid']//descendant::a[1]");
+    private By testCaseCard = By.xpath("//a[@href='/testcases' and @class='card ']");
+    private By profileCard = By.xpath("//a[@href='/profile' and @class='card ']");
 
     public DashboardPage(WebDriver driver) {
         this.driver = driver;
     }
 
-    public CreateTestCasePage clickTestCaseCard() {
+    public TestCasesPage clickTestCaseCard() {
         driver.findElement(testCaseCard).click();
-        return new CreateTestCasePage(driver);
+        return new TestCasesPage(driver);
     }
 
     public ProfilePage clickProfileCard() {

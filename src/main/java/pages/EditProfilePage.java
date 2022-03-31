@@ -14,8 +14,18 @@ public class EditProfilePage {
     private By dropdown = By.name("career_status_id");
     private By submitButton = By.xpath("//button[text()='Submit']");
 
+    private By inputField = By.xpath("//input[@name='image']");
+    private By uploadButton = By.xpath("//button[text()='Upload']");
+
+    private By alertUploadSuccessful = By.xpath("//div[text()='✔ Photo successfully uploaded']");
+
     public EditProfilePage(WebDriver driver) {
         this.driver = driver;
+    }
+
+
+    private Select findDropdown() {
+        return new Select(driver.findElement(dropdown));
     }
 
     public void selectDropdownStatus(String option) {
@@ -31,12 +41,17 @@ public class EditProfilePage {
         return stringList;
     }
 
-    private Select findDropdown() {
-        return new Select(driver.findElement(dropdown));
-    }
-
     public ProfilePage clickSubmitButton() {
         driver.findElement(submitButton).click();
         return new ProfilePage(driver);
+    }
+
+    public void setProfilePicture(String absoluteFilePath) {
+        driver.findElement(inputField).sendKeys(absoluteFilePath);
+        driver.findElement(uploadButton).click();
+    }
+
+    public String findUploadAlert() {
+        return driver.findElement(alertUploadSuccessful).getText();
     }
 }

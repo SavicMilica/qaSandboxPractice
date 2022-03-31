@@ -22,12 +22,19 @@ public class EditProfileTests extends SeleniumTestCaseTests {
         ProfilePage profilePage = dashboardPage.clickProfileCard();
         EditProfilePage editProfilePage = profilePage.clickEditProfileButton();
         Thread.sleep(2000);
-        editProfilePage.selectDropdownStatus("Senior");
+
+        editProfilePage.setProfilePicture("C:\\Users\\Milica\\Desktop\\qasandbox\\picture.jpg");
+        Thread.sleep(2000);
+
+        editProfilePage.selectDropdownStatus(KeyParameters.DROPDOWN_OPTION);
         List<String> selectedOptions = editProfilePage.getSelectedOptions();
+
+        Thread.sleep(2000);
         editProfilePage.clickSubmitButton();
 
+        Assert.assertEquals(editProfilePage.findUploadAlert(), "✔ Photo successfully uploaded", "upload message is not the same");
         Assert.assertEquals(selectedOptions.size(), 1, "Incorrect number of selections");
-        Assert.assertTrue(selectedOptions.contains("Senior"), "Option not selected");
+        Assert.assertTrue(selectedOptions.contains(KeyParameters.DROPDOWN_OPTION), "Option not selected");
     }
 
 }
