@@ -16,5 +16,5 @@ public class KeyParameters {
     public static final String EXPECTED_RESULT_UPDATE = "This is updated expected result";
     public static final String TEST_STEP_UPDATE = "This is updated test step";
 
-    public static final String DROPDOWN_OPTION = "Lead";
+    public static final String DROPDOWN_OPTION = "Senior";
 }

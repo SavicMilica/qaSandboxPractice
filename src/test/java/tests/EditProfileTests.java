@@ -8,12 +8,15 @@ import pages.EditProfilePage;
 import pages.LoginPage;
 import pages.ProfilePage;
 
+import java.io.IOException;
 import java.util.List;
+
+import static org.bouncycastle.crypto.tls.ContentType.alert;
 
 public class EditProfileTests extends SeleniumTestCaseTests {
 
     @Test
-    public void verifySuccessfulEditProfile() throws InterruptedException {
+    public void verifySuccessfulEditProfile() throws InterruptedException, IOException {
         LoginPage loginPage = homePage.clickLoginButton();
         loginPage.setEmail(KeyParameters.EMAIL);
         loginPage.setPassword(KeyParameters.PASSWORD);
@@ -35,6 +38,7 @@ public class EditProfileTests extends SeleniumTestCaseTests {
         Assert.assertEquals(editProfilePage.findUploadAlert(), "✔ Photo successfully uploaded", "upload message is not the same");
         Assert.assertEquals(selectedOptions.size(), 1, "Incorrect number of selections");
         Assert.assertTrue(selectedOptions.contains(KeyParameters.DROPDOWN_OPTION), "Option not selected");
+
     }
 
 }

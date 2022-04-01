@@ -1,7 +1,15 @@
 package pages;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.io.FileHandler;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.security.Provider;
 
 public class TestCasesPage {
 
@@ -32,5 +40,6 @@ public class TestCasesPage {
         driver.findElement(closeButton).click();
         return new TestCasesPage(driver);
     }
+
 
 }

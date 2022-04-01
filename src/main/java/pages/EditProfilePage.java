@@ -1,10 +1,13 @@
 package pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import com.google.common.io.Files;
+import org.openqa.selenium.*;
+import org.openqa.selenium.io.FileHandler;
 import org.openqa.selenium.support.ui.Select;
+import org.testng.ITestResult;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,4 +57,5 @@ public class EditProfilePage {
     public String findUploadAlert() {
         return driver.findElement(alertUploadSuccessful).getText();
     }
+
 }
